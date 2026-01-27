@@ -39,7 +39,7 @@ export default function Create() {
                                     id="prompt"
                                     name="prompt"
                                     rows={4}
-                                    className="block w-full border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-900 dark:text-gray-300"
+                                    className="block w-full p-3 border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-900 dark:text-gray-300 transition-colors duration-200"
                                     placeholder="e.g., a blog post about the future of renewable energy"
                                     value={data.prompt}
                                     onChange={(e) => setData('prompt', e.target.value)}

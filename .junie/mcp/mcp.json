@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/bishalkarki/.config/herd-lite/bin/php",
+            "args": [
+                "/Users/bishalkarki/own/laravel-boost/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

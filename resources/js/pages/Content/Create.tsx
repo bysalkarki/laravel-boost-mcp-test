@@ -2,9 +2,17 @@ import { useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { store } from '@/routes/content';
 
+interface PageProps {
+    generatedContent?: string;
+    prompt?: string;
+    aggregateId?: string;
+    status?: string;
+    failureReason?: string;
+}
+
 export default function Create() {
     const { props } = usePage();
-    const { generatedContent, prompt: initialPrompt } = props as { generatedContent?: string; prompt?: string };
+    const { generatedContent, prompt: initialPrompt, status, failureReason } = props as PageProps;
     const { data, setData, post, processing, errors } = useForm({
         prompt: initialPrompt || '',
     });
@@ -58,6 +66,15 @@ export default function Create() {
                         </div>
                     </form>
                 </div>
+
+                {status === 'failed' && (
+                    <div className="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-red-800 dark:text-red-400">Generation Failed</h3>
+                        <p className="mt-2 text-red-700 dark:text-red-300">
+                            {failureReason || 'An unexpected error occurred. Please try again.'}
+                        </p>
+                    </div>
+                )}
 
                 {(generatedContent || processing) && (
                     <div className="mt-12">

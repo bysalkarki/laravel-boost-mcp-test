@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Generator;
 
 class AiService
 {
@@ -44,6 +45,46 @@ Log::info($generatedText);
         } catch (\Throwable $e) {
             Log::error('Ollama AI generation failed: ' . $e->getMessage());
             return 'Failed to generate content from AI. Please check your Ollama server and configuration.';
+        }
+    }
+
+    /**
+     * Stream content generation from Ollama, yielding each token chunk.
+     */
+    public function generateContentStream(string $prompt): Generator
+    {
+        $response = Http::withOptions([
+            'stream' => true,
+            'timeout' => 120,
+        ])->post($this->ollamaUrl, [
+            'model' => $this->ollamaModel,
+            'prompt' => $prompt,
+            'stream' => true,
+        ]);
+
+        $body = $response->toPsrResponse()->getBody();
+        $buffer = '';
+
+        while (! $body->eof()) {
+            $buffer .= $body->read(1024);
+            // Process complete lines from buffer
+            while (($newlinePos = strpos($buffer, "\n")) !== false) {
+                $line = substr($buffer, 0, $newlinePos);
+                $buffer = substr($buffer, $newlinePos + 1);
+
+                if ($line === '') {
+                    continue;
+                }
+
+                $data = json_decode($line, true);
+                if (isset($data['response']) && $data['response'] !== '') {
+                    yield $data['response'];
+                }
+
+                if (isset($data['done']) && $data['done'] === true) {
+                    return;
+                }
+            }
         }
     }
 }

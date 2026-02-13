@@ -28,7 +28,6 @@ class ContentStreamController extends Controller
         );
 
         return new StreamedResponse(function () use ($aiService, $eventStore, $aggregateId, $prompt) {
-            // Send aggregate ID first
             echo 'data: '.json_encode(['type' => 'start', 'aggregateId' => $aggregateId])."\n\n";
             flush();
 
@@ -45,12 +44,14 @@ class ContentStreamController extends Controller
                     new ContentGenerationCompleted($aggregateId, $prompt, $fullContent),
                 );
 
+                echo 'data: '.json_encode(['type' => 'done', 'aggregateId' => $aggregateId])."\n\n";
                 flush();
             } catch (\Throwable $e) {
                 $eventStore->append(
                     new ContentGenerationFailed($aggregateId, $prompt, $e->getMessage()),
                 );
 
+                echo 'data: '.json_encode(['type' => 'error', 'message' => $e->getMessage()])."\n\n";
                 flush();
             }
         }, 200, [

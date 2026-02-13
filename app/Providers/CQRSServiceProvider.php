@@ -14,8 +14,10 @@ use App\CQRS\EventStore\EventStore;
 use App\CQRS\EventStore\EventStoreInterface;
 use App\CQRS\Handlers\Content\GenerateContentHandler;
 use App\CQRS\Handlers\Content\GetContentGenerationHandler;
+use App\CQRS\Handlers\Content\GetContentGenerationsHandler;
 use App\CQRS\Projections\Content\ContentGenerationProjector;
 use App\CQRS\Queries\Content\GetContentGenerationQuery;
+use App\CQRS\Queries\Content\GetContentGenerationsQuery;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -35,6 +37,7 @@ class CQRSServiceProvider extends ServiceProvider
         $this->app->singleton(QueryBusInterface::class, function ($app) {
             $bus = new QueryBus($app);
             $bus->register(GetContentGenerationQuery::class, GetContentGenerationHandler::class);
+            $bus->register(GetContentGenerationsQuery::class, GetContentGenerationsHandler::class);
 
             return $bus;
         });

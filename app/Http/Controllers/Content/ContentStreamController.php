@@ -29,8 +29,7 @@ class ContentStreamController extends Controller
 
         return new StreamedResponse(function () use ($aiService, $eventStore, $aggregateId, $prompt) {
             // Send aggregate ID first
-            echo "data: " . json_encode(['type' => 'start', 'aggregateId' => $aggregateId]) . "\n\n";
-            ob_flush();
+            echo 'data: '.json_encode(['type' => 'start', 'aggregateId' => $aggregateId])."\n\n";
             flush();
 
             $fullContent = '';
@@ -38,8 +37,7 @@ class ContentStreamController extends Controller
             try {
                 foreach ($aiService->generateContentStream($prompt) as $chunk) {
                     $fullContent .= $chunk;
-                    echo "data: " . json_encode(['type' => 'chunk', 'content' => $chunk]) . "\n\n";
-                    ob_flush();
+                    echo 'data: '.json_encode(['type' => 'chunk', 'content' => $chunk])."\n\n";
                     flush();
                 }
 
@@ -47,16 +45,12 @@ class ContentStreamController extends Controller
                     new ContentGenerationCompleted($aggregateId, $prompt, $fullContent),
                 );
 
-                echo "data: " . json_encode(['type' => 'done']) . "\n\n";
-                ob_flush();
                 flush();
             } catch (\Throwable $e) {
                 $eventStore->append(
                     new ContentGenerationFailed($aggregateId, $prompt, $e->getMessage()),
                 );
 
-                echo "data: " . json_encode(['type' => 'error', 'message' => 'Generation failed. Please try again.']) . "\n\n";
-                ob_flush();
                 flush();
             }
         }, 200, [

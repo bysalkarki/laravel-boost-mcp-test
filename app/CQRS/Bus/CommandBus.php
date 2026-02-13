@@ -9,9 +9,7 @@ class CommandBus implements CommandBusInterface
     /** @var array<class-string<CommandInterface>, class-string> */
     private array $handlers = [];
 
-    public function __construct(private Container $container)
-    {
-    }
+    public function __construct(private Container $container) {}
 
     public function register(string $commandClass, string $handlerClass): void
     {

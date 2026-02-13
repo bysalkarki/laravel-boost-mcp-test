@@ -2,6 +2,4 @@
 
 namespace App\CQRS\Bus;
 
-interface CommandInterface
-{
-}
+interface CommandInterface {}

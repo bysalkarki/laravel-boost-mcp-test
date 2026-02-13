@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use Generator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Generator;
 
 class AiService
 {
     protected string $ollamaUrl;
+
     protected string $ollamaModel;
 
     public function __construct()
@@ -39,11 +40,13 @@ class AiService
                     $generatedText .= $data['response'];
                 }
             }
-Log::info($generatedText);
+            Log::info($generatedText);
+
             return $generatedText;
 
         } catch (\Throwable $e) {
-            Log::error('Ollama AI generation failed: ' . $e->getMessage());
+            Log::error('Ollama AI generation failed: '.$e->getMessage());
+
             return 'Failed to generate content from AI. Please check your Ollama server and configuration.';
         }
     }

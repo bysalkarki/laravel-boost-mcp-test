@@ -9,9 +9,7 @@ class QueryBus implements QueryBusInterface
     /** @var array<class-string<QueryInterface>, class-string> */
     private array $handlers = [];
 
-    public function __construct(private Container $container)
-    {
-    }
+    public function __construct(private Container $container) {}
 
     public function register(string $queryClass, string $handlerClass): void
     {

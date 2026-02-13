@@ -15,8 +15,7 @@ class GenerateContentHandler
     public function __construct(
         private EventStoreInterface $eventStore,
         private AiService $aiService,
-    ) {
-    }
+    ) {}
 
     public function handle(GenerateContentCommand $command): string
     {

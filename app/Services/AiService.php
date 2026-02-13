@@ -20,15 +20,19 @@ class AiService
 
     public function generateContent(string $prompt): string
     {
+        $fullPrompt = "{$prompt}\n\nIMPORTANT: Keep your response under 120 words. Be concise.";
         try {
-            $response = Http::post($this->ollamaUrl, [
+            $response = Http::timeout(100)->post($this->ollamaUrl, [
                 'model' => $this->ollamaModel,
-                'prompt' => $prompt,
+                'prompt' => $fullPrompt,
                 'stream' => true,
-                'timeout' => 100,
+                'options' => [
+                    'num_predict' => 150, // roughly 100-120 words
+                ]
             ]);
+
             $generatedText = '';
-            // Ollama streams responses, so we need to process each chunk.
+
             foreach (explode("\n", $response->body()) as $chunk) {
                 if ($chunk === '') {
                     continue;
@@ -38,13 +42,12 @@ class AiService
                     $generatedText .= $data['response'];
                 }
             }
-            Log::info($generatedText);
 
+            Log::info($generatedText);
             return $generatedText;
 
         } catch (\Throwable $e) {
             Log::error('Ollama AI generation failed: '.$e->getMessage());
-
             return 'Failed to generate content from AI. Please check your Ollama server and configuration.';
         }
     }
@@ -54,12 +57,13 @@ class AiService
      */
     public function generateContentStream(string $prompt): Generator
     {
+        $fullPrompt = "{$prompt}\n\nIMPORTANT: Keep your response under 120 words. Be concise.";
         $response = Http::withOptions([
             'stream' => true,
             'timeout' => 120,
         ])->post($this->ollamaUrl, [
             'model' => $this->ollamaModel,
-            'prompt' => $prompt,
+            'prompt' => $fullPrompt,
             'stream' => true,
         ]);
 

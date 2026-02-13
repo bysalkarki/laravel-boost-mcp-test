@@ -20,11 +20,10 @@ class AiService
 
     public function generateContent(string $prompt): string
     {
-        $fullPrompt = "{$prompt}\n\nIMPORTANT: Keep your response under 120 words. Be concise.";
         try {
             $response = Http::timeout(100)->post($this->ollamaUrl, [
                 'model' => $this->ollamaModel,
-                'prompt' => $fullPrompt,
+                'prompt' => $prompt,
                 'stream' => true,
                 'options' => [
                     'num_predict' => 150, // roughly 100-120 words
@@ -57,13 +56,12 @@ class AiService
      */
     public function generateContentStream(string $prompt): Generator
     {
-        $fullPrompt = "{$prompt}\n\nIMPORTANT: Keep your response under 120 words. Be concise.";
         $response = Http::withOptions([
             'stream' => true,
             'timeout' => 120,
         ])->post($this->ollamaUrl, [
             'model' => $this->ollamaModel,
-            'prompt' => $fullPrompt,
+            'prompt' => $prompt,
             'stream' => true,
         ]);
 

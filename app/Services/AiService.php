@@ -14,10 +14,8 @@ class AiService
 
     public function __construct()
     {
-        // For now, hardcode the URL and model.
-        // In a real application, these would come from configuration (e.g., .env file).
-        $this->ollamaUrl = 'http://localhost:11434/api/generate';
-        $this->ollamaModel = 'gemma3:4b';
+        $this->ollamaUrl = config('services.ollama.url');
+        $this->ollamaModel = config('services.ollama.model');
     }
 
     public function generateContent(string $prompt): string

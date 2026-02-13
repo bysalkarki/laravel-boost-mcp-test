@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'ollama' => [
+        'url' => env('OLAMA_URL', 'http://localhost:11434/api/generate'),
+        'model' => env('OLAMA_MODEL', 'gemma3:4b'),
+    ],
 
 ];

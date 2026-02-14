@@ -3,6 +3,7 @@
 namespace App\CQRS\Projections\Content;
 
 use App\CQRS\Events\Content\ContentGenerationCompleted;
+use App\CQRS\Events\Content\ContentGenerationDeleted;
 use App\CQRS\Events\Content\ContentGenerationFailed;
 use App\CQRS\Events\Content\ContentGenerationRequested;
 use App\Models\ReadModels\ContentGeneration;
@@ -32,5 +33,10 @@ class ContentGenerationProjector
             'status' => 'failed',
             'failure_reason' => $event->reason,
         ]);
+    }
+
+    public function onContentGenerationDeleted(ContentGenerationDeleted $event): void
+    {
+        ContentGeneration::where('aggregate_id', $event->aggregateId)->delete();
     }
 }

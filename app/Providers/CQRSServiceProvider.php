@@ -6,12 +6,15 @@ use App\CQRS\Bus\CommandBus;
 use App\CQRS\Bus\CommandBusInterface;
 use App\CQRS\Bus\QueryBus;
 use App\CQRS\Bus\QueryBusInterface;
+use App\CQRS\Commands\Content\DeleteContentCommand;
 use App\CQRS\Commands\Content\GenerateContentCommand;
 use App\CQRS\Events\Content\ContentGenerationCompleted;
+use App\CQRS\Events\Content\ContentGenerationDeleted;
 use App\CQRS\Events\Content\ContentGenerationFailed;
 use App\CQRS\Events\Content\ContentGenerationRequested;
 use App\CQRS\EventStore\EventStore;
 use App\CQRS\EventStore\EventStoreInterface;
+use App\CQRS\Handlers\Content\DeleteContentHandler;
 use App\CQRS\Handlers\Content\GenerateContentHandler;
 use App\CQRS\Handlers\Content\GetContentGenerationHandler;
 use App\CQRS\Handlers\Content\GetContentGenerationsHandler;
@@ -30,6 +33,7 @@ class CQRSServiceProvider extends ServiceProvider
         $this->app->singleton(CommandBusInterface::class, function ($app) {
             $bus = new CommandBus($app);
             $bus->register(GenerateContentCommand::class, GenerateContentHandler::class);
+            $bus->register(DeleteContentCommand::class, DeleteContentHandler::class);
 
             return $bus;
         });
@@ -50,5 +54,6 @@ class CQRSServiceProvider extends ServiceProvider
         Event::listen(ContentGenerationRequested::class, [$projector, 'onContentGenerationRequested']);
         Event::listen(ContentGenerationCompleted::class, [$projector, 'onContentGenerationCompleted']);
         Event::listen(ContentGenerationFailed::class, [$projector, 'onContentGenerationFailed']);
+        Event::listen(ContentGenerationDeleted::class, [$projector, 'onContentGenerationDeleted']);
     }
 }

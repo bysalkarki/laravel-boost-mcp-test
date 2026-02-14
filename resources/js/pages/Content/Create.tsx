@@ -204,7 +204,7 @@ export default function Create({ aggregateId, prompt: viewingPrompt, generatedCo
                     ) : (
                         <ul className="py-2">
                             {history.map((item) => (
-                                <li key={item.aggregate_id}>
+                                <li key={item.aggregate_id} className="group relative">
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -215,11 +215,26 @@ export default function Create({ aggregateId, prompt: viewingPrompt, generatedCo
                                             aggregateId === item.aggregate_id ? 'bg-indigo-50 dark:bg-indigo-950/30 border-r-2 border-indigo-500' : ''
                                         }`}
                                     >
-                                        <p className="text-sm text-gray-900 dark:text-gray-100 truncate">{item.prompt}</p>
+                                        <p className="text-sm text-gray-900 dark:text-gray-100 truncate pr-6">{item.prompt}</p>
                                         <div className="mt-1 flex items-center gap-2">
                                             <StatusBadge status={item.status} />
                                             <span className="text-[10px] text-gray-400 dark:text-gray-500">{timeAgo(item.created_at)}</span>
                                         </div>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (confirm('Are you sure you want to delete this generation?')) {
+                                                router.delete(`/content/${item.aggregate_id}`);
+                                            }
+                                        }}
+                                        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-1 rounded-lg text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all cursor-pointer"
+                                        title="Delete"
+                                    >
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
                                     </button>
                                 </li>
                             ))}
@@ -255,8 +270,26 @@ export default function Create({ aggregateId, prompt: viewingPrompt, generatedCo
 
                     {isViewing && displayPrompt && (
                         <div className="mb-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-6">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">Prompt</p>
-                            <p className="text-gray-700 dark:text-gray-300">{displayPrompt}</p>
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">Prompt</p>
+                                    <p className="text-gray-700 dark:text-gray-300">{displayPrompt}</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (confirm('Are you sure you want to delete this generation?')) {
+                                            router.delete(`/content/${aggregateId}`);
+                                        }
+                                    }}
+                                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border border-red-200 dark:border-red-800 transition-colors cursor-pointer"
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     )}
 

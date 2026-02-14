@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content;
 
 use App\CQRS\Bus\CommandBusInterface;
+use App\CQRS\Commands\Content\DeleteContentCommand;
 use App\CQRS\Commands\Content\GenerateContentCommand;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,5 +21,14 @@ class ContentCommandController extends Controller
         );
 
         return redirect()->route('content.show', $aggregateId);
+    }
+
+    public function destroy(string $aggregateId, CommandBusInterface $commandBus)
+    {
+        $commandBus->dispatch(
+            new DeleteContentCommand($aggregateId),
+        );
+
+        return redirect()->route('home');
     }
 }
